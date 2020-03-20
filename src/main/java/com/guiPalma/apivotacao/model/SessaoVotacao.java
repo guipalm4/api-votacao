@@ -1,5 +1,7 @@
 package com.guiPalma.apivotacao.model;
 
+import java.util.Calendar;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
-import com.guiPalma.apivotacao.dto.PautaDto;
+import com.guiPalma.apivotacao.dto.SessaoVotacaoDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,25 +27,39 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Pauta implements AbstractEntity{
-	private static final long serialVersionUID = -1329846082700053690L;
+public class SessaoVotacao implements AbstractEntity {
+
+	private static final long serialVersionUID = 5887605143221475221L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@EqualsAndHashCode.Include
-	private Long id;
+	private Long id;	
 	
 	@NotNull(message = "O campo 'descricao' é obrigatório")
 	@Column(nullable = false)
 	private String descricao;
+	
+	@NotNull(message = "É necessário informar uma pauta")
+	@Column(nullable = false)
+	private Pauta pauta;
+	
+	@Column(nullable = false, columnDefinition="Decimal(10,2) default '1.00'")
+	private Double duracao;
+	
+	@Column(nullable = false)
+	private Calendar dataCricao;
 	
 	@Override
 	public Long getId() {
 		return this.id;
 	}
 	
-	public static Pauta fromDto(PautaDto dto) {
-		return Pauta.builder().id(dto.getId()).descricao(dto.getDescricao()).build();
+	public static SessaoVotacao fromDto(SessaoVotacaoDto dto) {
+		return SessaoVotacao.builder().id(dto.getId())
+				.descricao(dto.getDescricao())
+				.pauta(Pauta.fromDto(dto.getPauta()))
+				.build();
 	}
 
 }
