@@ -34,7 +34,7 @@ public class PautaService {
 	}
 
 	private Pauta setParams(PautaDto pauta) {
-		return Pauta.builder().id(null).descricao(pauta.getDescricao()).build();
+		return Pauta.fromDto(pauta);
 	}
 
 }

@@ -1,10 +1,14 @@
 package com.guiPalma.apivotacao.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 import com.guiPalma.apivotacao.dto.PautaDto;
@@ -36,6 +40,10 @@ public class Pauta implements AbstractEntity{
 	@NotNull(message = "O campo 'descricao' é obrigatório")
 	@Column(nullable = false)
 	private String descricao;
+	
+	@OneToMany	
+	@JoinColumn(name = "pauta_id")
+	private List<SessaoVotacao>	sessoes;
 	
 	@Override
 	public Long getId() {

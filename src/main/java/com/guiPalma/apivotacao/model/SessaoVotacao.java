@@ -7,8 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.guiPalma.apivotacao.dto.SessaoVotacaoDto;
 
 import lombok.AllArgsConstructor;
@@ -38,17 +41,21 @@ public class SessaoVotacao implements AbstractEntity {
 	
 	@NotNull(message = "O campo 'descricao' é obrigatório")
 	@Column(nullable = false)
-	private String descricao;
+	private String descricao;	
 	
-	@NotNull(message = "É necessário informar uma pauta")
-	@Column(nullable = false)
+	@NotNull
+	@ManyToOne
+	@JsonIgnore
+    @JoinColumn(name = "pauta_id")
 	private Pauta pauta;
 	
-	@Column(nullable = false, columnDefinition="Decimal(10,2) default '1.00'")
-	private Double duracao;
+	@Column(nullable = false)
+	private Integer duracao;
 	
 	@Column(nullable = false)
 	private Calendar dataCricao;
+	
+	private Boolean ativa;
 	
 	@Override
 	public Long getId() {

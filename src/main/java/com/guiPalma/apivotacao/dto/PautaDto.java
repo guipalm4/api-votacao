@@ -1,5 +1,7 @@
 package com.guiPalma.apivotacao.dto;
 
+import com.guiPalma.apivotacao.endpoint.service.validation.PautaInsert;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +15,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@PautaInsert
 public class PautaDto {
 
 	private Long id;
