@@ -11,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.guiPalma.apivotacao.dto.SessaoVotacaoDto;
 
 import lombok.AllArgsConstructor;
@@ -45,7 +44,6 @@ public class SessaoVotacao implements AbstractEntity {
 	
 	@NotNull
 	@ManyToOne
-	@JsonIgnore
     @JoinColumn(name = "pauta_id")
 	private Pauta pauta;
 	
