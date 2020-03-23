@@ -23,6 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.guiPalma.apivotacao.dto.PautaDto;
 import com.guiPalma.apivotacao.dto.SessaoVotacaoDto;
 import com.guiPalma.apivotacao.exceptions.ObjectNotFoundException;
+import com.guiPalma.apivotacao.exceptions.ServiceErrorException;
 import com.guiPalma.apivotacao.model.Pauta;
 import com.guiPalma.apivotacao.model.SessaoVotacao;
 import com.guiPalma.apivotacao.repository.PautaRepository;
@@ -79,6 +80,7 @@ public class SessaoVotacaoServiceTests {
 		
 		BDDMockito.given(pautaRepository.findById(Mockito.anyLong())).willReturn(null);
 		BDDMockito.given(pautaRepository.findByDescricao(Mockito.anyString())).willReturn(pautaMock);
+		BDDMockito.given(sessaoRepository.countByPauta(Mockito.any(Pauta.class))).willReturn(0L);
 		BDDMockito.given(sessaoRepository.save(Mockito.any(SessaoVotacao.class))).willReturn(sessaoMock);
 		
 		
@@ -86,6 +88,7 @@ public class SessaoVotacaoServiceTests {
 		
 		verify(pautaRepository,  never()).findById(Mockito.anyLong());
 		verify(pautaRepository, times(1)).findByDescricao(Mockito.anyString());
+		verify(sessaoRepository, times(1)).countByPauta(Mockito.any(Pauta.class));
 		verify(sessaoRepository, times(1)).save(Mockito.any(SessaoVotacao.class));
 		assertNotNull(result);
 		assertNotNull(result.getId());
@@ -111,6 +114,7 @@ public class SessaoVotacaoServiceTests {
 		
 		BDDMockito.given(pautaRepository.findById(Mockito.anyLong())).willReturn(Optional.of(pautaMock));
 		BDDMockito.given(pautaRepository.findByDescricao(Mockito.anyString())).willReturn(null);
+		BDDMockito.given(sessaoRepository.countByPauta(Mockito.any(Pauta.class))).willReturn(0L);
 		BDDMockito.given(sessaoRepository.save(Mockito.any(SessaoVotacao.class))).willReturn(sessaoMock);
 		
 		
@@ -118,6 +122,7 @@ public class SessaoVotacaoServiceTests {
 		
 		verify(pautaRepository,  times(1)).findById(Mockito.anyLong());
 		verify(pautaRepository, never()).findByDescricao(Mockito.anyString());
+		verify(sessaoRepository, times(1)).countByPauta(Mockito.any(Pauta.class));
 		verify(sessaoRepository, times(1)).save(Mockito.any(SessaoVotacao.class));
 		assertNotNull(result);
 		assertNotNull(result.getId());
@@ -141,7 +146,33 @@ public class SessaoVotacaoServiceTests {
 		
 		service.criarSessaoVotacao(dto);
 	    
+		
 		verify(sessaoRepository, never()).save(Mockito.any(SessaoVotacao.class));
+		verify(sessaoRepository, never()).countByPauta(Mockito.any(Pauta.class));
 	}
+	
+	@Test
+	public void deve_lancar_excessao_pauta_ja_utilizada() {
+		
+		var dto = SessaoVotacaoDto.builder()
+				.descricao(descricaoSessao)
+				.pauta(PautaDto.builder().id(idPauta).descricao(null).build())
+				.build();
+		var pautaMock = Pauta.builder().id(idPauta).descricao(descricaoPauta).build();
+		
+		BDDMockito.given(pautaRepository.findById(Mockito.anyLong())).willReturn(Optional.of(pautaMock));
+		BDDMockito.given(sessaoRepository.countByPauta(Mockito.any(Pauta.class))).willReturn(1L);
+		
+		exceptionRule.expect(ServiceErrorException.class);
+	    exceptionRule.expectMessage("Pauta ja está sendo utilizada em outra sessão de votação");
+		
+		service.criarSessaoVotacao(dto);
+	    
+		verify(sessaoRepository, times(1)).countByPauta(Mockito.any(Pauta.class));
+		verify(pautaRepository, never()).findByDescricao(Mockito.anyString());
+		verify(sessaoRepository, never()).save(Mockito.any(SessaoVotacao.class));
+		
+	}
+	
 
 }

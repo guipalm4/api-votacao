@@ -8,7 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import com.guiPalma.apivotacao.dto.SessaoVotacaoDto;
@@ -43,7 +43,7 @@ public class SessaoVotacao implements AbstractEntity {
 	private String descricao;	
 	
 	@NotNull
-	@ManyToOne
+	@OneToOne
     @JoinColumn(name = "pauta_id")
 	private Pauta pauta;
 	
@@ -54,6 +54,8 @@ public class SessaoVotacao implements AbstractEntity {
 	private Calendar dataCricao;
 	
 	private Boolean ativa;
+	
+	private String resultadoVotacao;
 	
 	@Override
 	public Long getId() {
