@@ -24,6 +24,7 @@ import com.guiPalma.apivotacao.repository.PautaRepository;
 import com.guiPalma.apivotacao.repository.SessaoVotacaoRepository;
 import com.guiPalma.apivotacao.repository.VotoRepository;
 import com.guiPalma.apivotacao.util.ApiValidator;
+import com.guiPalma.apivotacao.util.ServiceValidator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,6 +36,8 @@ private final SessaoVotacaoRepository sessaoVotacaoRepository;
 private final PautaRepository pautaRepository;
 private final AssociadoRepository associadoRepository;
 private final VotoRepository votoRepository;
+
+private final ServiceValidator serviceValidator;
 	
 	public Page<SessaoVotacao> list(Pageable pageable) {
 		return sessaoVotacaoRepository.findAll(pageable);
@@ -47,7 +50,7 @@ private final VotoRepository votoRepository;
 		Pauta pautaEncontrada = localizarPauta(sessao.getPauta());
 		
 		if(ApiValidator.has(pautaEncontrada)) {
-			if(! existeSessaoVinculada(pautaEncontrada)) {			
+			if(! serviceValidator.existeSessaoVinculada(pautaEncontrada)) {			
 				return sessaoVotacaoRepository.save(setParams(sessao,pautaEncontrada));
 			}throw new ServiceErrorException("Pauta ja está sendo utilizada em outra sessão de votação");
 		}throw new ObjectNotFoundException("Pauta não encontrada");
@@ -59,8 +62,8 @@ private final VotoRepository votoRepository;
 		
 		if(ApiValidator.has(associado)){
 			var pauta = localizarPauta(votoDto.getPauta());			
-				if(validarPauta(pauta)) {
-					if(associadoPodeVotar(pauta, associado)) {						
+				if(serviceValidator.validarPauta(pauta)) {
+					if(serviceValidator.associadoPodeVotar(pauta, associado)) {						
 						var voto = votoRepository.save(setParams(votoDto, associado, pauta));
 						pauta.getVotos().add(voto);
 						pautaRepository.save(pauta);
@@ -68,12 +71,7 @@ private final VotoRepository votoRepository;
 					}throw new ServiceErrorException("Associado já votou nessa pauta");		
 				}
 		}throw new ObjectNotFoundException("Associado não encontrado");
-	}
-	
-	private boolean associadoPodeVotar(Pauta pauta, Associado associado) {
-		return ! pauta.getVotos().stream().filter(voto-> voto.getAssociado().getCpf().equals(associado.getCpf())).findAny().isPresent();
-	}
-
+	}	
 	private Voto setParams(VotoDto votoDto, Associado associado, Pauta pauta) {		
 		return Voto.builder()
 				.id(null)
@@ -81,30 +79,6 @@ private final VotoRepository votoRepository;
 				.pauta(pauta)
 				.voto((votoDto.getVoto().startsWith("S") || votoDto.getVoto().startsWith("s")) ? 'S' : 'N')
 				.build();
-	}
-
-	private boolean validarPauta(Pauta pauta) {
-		if(ApiValidator.has(pauta)) {
-			if(existeSessaoVinculada(pauta)){ 
-					if(existeSessaoAtivaParaPauta(pauta)) {
-						return true;						
-					}throw new ServiceErrorException("Sessão de votaçao não esta ativa");
-			}throw new ServiceErrorException("Pauta não vinculada a nenhuma sessão de votação");		
-		}throw new ObjectNotFoundException("Pauta não encontrada");
-		
-	}
-		
-	private Boolean existeSessaoAtivaParaPauta(Pauta pauta) {		
-		var votacao = sessaoVotacaoRepository.findByPauta(pauta);
-		
-		if(ApiValidator.has(votacao)) {
-			return votacao.getAtiva();
-		}
-		return false;
-	}
-	
-	private boolean existeSessaoVinculada(Pauta pautaEncontrada) {
-		return sessaoVotacaoRepository.countByPauta(pautaEncontrada) > 0;
 	}
 
 	private SessaoVotacao setParams(SessaoVotacaoDto sessao, Pauta pauta) {
@@ -142,11 +116,9 @@ private final VotoRepository votoRepository;
 		Optional<SessaoVotacao> sessaoEncontrada = sessaoVotacaoRepository.findById(idSessaoVotacao);
 		
 		if(sessaoEncontrada.isPresent()) {
-			var sessao = sessaoEncontrada.get();
-					
+			var sessao = sessaoEncontrada.get();					
 			if(sessao.getAtiva()) {
-				bloquearSessaoVotacao(sessao);
-				
+				bloquearSessaoVotacao(sessao);				
 				if(ApiValidator.has(sessao.getPauta())) {
 					var pauta = sessao.getPauta();
 					ResultadoDto resultadoVotacao = gerarResultado(pauta,sessao);
