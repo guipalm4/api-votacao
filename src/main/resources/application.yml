@@ -1,3 +1,8 @@
+app:
+  servicos-externos:
+    cpf:
+      endpoint: https://user-info.herokuapp.com/users/
+
 server:
   port: 9059   
 
@@ -13,8 +18,9 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
   jmx:
     enabled: false
-    
+            
   datasource:
     url: jdbc:mysql://localhost:3308/bd_votacao?allowPublicKeyRetrieval=true&sslMode=DISABLED
     username: root
     password: root123
+          

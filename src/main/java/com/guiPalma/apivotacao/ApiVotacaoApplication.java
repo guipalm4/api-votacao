@@ -13,12 +13,8 @@ import com.guiPalma.apivotacao.endpoint.service.MonitoramentoService;
 @SpringBootApplication
 @EnableAsync
 public class ApiVotacaoApplication {
-
-	@Autowired
-	private static MonitoramentoService monitoramento;
 	
-	public static void main(String[] args) {
-		monitoramento.monitorarSessaoVotacao();
+	public static void main(String[] args) {		
 		SpringApplication.run(ApiVotacaoApplication.class, args);
 	}
 	

@@ -57,20 +57,17 @@ private final ServiceValidator serviceValidator;
 	}
 	
 	public Voto votar(VotoDto votoDto) {
-		
-		var associado  =  associadoRepository.findByCpf(votoDto.getCpfAssociado());
-		
-		if(ApiValidator.has(associado)){
-			var pauta = localizarPauta(votoDto.getPauta());			
-				if(serviceValidator.validarPauta(pauta)) {
-					if(serviceValidator.associadoPodeVotar(pauta, associado)) {						
-						var voto = votoRepository.save(setParams(votoDto, associado, pauta));
-						pauta.getVotos().add(voto);
-						pautaRepository.save(pauta);
-						return voto;
-					}throw new ServiceErrorException("Associado já votou nessa pauta");		
-				}
-		}throw new ObjectNotFoundException("Associado não encontrado");
+		var pauta = localizarPauta(votoDto.getPauta());			
+		if(serviceValidator.validarPauta(pauta)) {
+			var associado  =  associadoRepository.findByCpf(votoDto.getCpfAssociado());
+			if(serviceValidator.validarAssociado(associado, pauta)) {
+				var voto = votoRepository.save(setParams(votoDto, associado, pauta));
+				pauta.getVotos().add(voto);
+				pautaRepository.save(pauta);
+				return voto;
+			}
+		}
+		return null;
 	}	
 	private Voto setParams(VotoDto votoDto, Associado associado, Pauta pauta) {		
 		return Voto.builder()

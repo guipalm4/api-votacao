@@ -6,6 +6,7 @@ import javax.validation.ConstraintValidatorContext;
 import com.guiPalma.apivotacao.dto.VotoDto;
 import com.guiPalma.apivotacao.exceptions.FieldMessage;
 import com.guiPalma.apivotacao.util.ApiValidator;
+import com.guiPalma.apivotacao.util.CampoUtil;
 
 public class VotoInsertValidator implements ConstraintValidator<VotoInsert, VotoDto>{
 
@@ -15,9 +16,13 @@ public class VotoInsertValidator implements ConstraintValidator<VotoInsert, Voto
 		
 		var listaErro = new ArrayList<FieldMessage>();
 		
-
 		if(! ApiValidator.has(voto.getCpfAssociado())){
 			listaErro.add(new FieldMessage("Cpf", "Não informado"));			
+		}
+		if( ApiValidator.has(voto.getCpfAssociado())){
+			if(CampoUtil.isCpf(CampoUtil.retiraMascaraCpf(voto.getCpfAssociado()))) {
+				listaErro.add(new FieldMessage("Cpf", "Cpf inválido"));			
+			}
 		}
 		
 		if(! ApiValidator.has(voto.getPauta())){

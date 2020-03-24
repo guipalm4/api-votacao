@@ -8,6 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 import com.guiPalma.apivotacao.dto.AssociadoDto;
 import com.guiPalma.apivotacao.exceptions.FieldMessage;
 import com.guiPalma.apivotacao.util.ApiValidator;
+import com.guiPalma.apivotacao.util.CampoUtil;
 
 public class AssociadoInsertValidator implements ConstraintValidator<AssociadoInsert, AssociadoDto>{
 
@@ -22,6 +23,12 @@ public class AssociadoInsertValidator implements ConstraintValidator<AssociadoIn
 		
 		if(! ApiValidator.has(associado.getCpf())){
 			listaErro.add(new FieldMessage("Cpf", "Não informado"));			
+		}
+		
+		if( ApiValidator.has(associado.getCpf())){
+			if(CampoUtil.isCpf(CampoUtil.retiraMascaraCpf(associado.getCpf()))) {
+				listaErro.add(new FieldMessage("Cpf", "Cpf inválido"));			
+			}
 		}
 		
 		for (FieldMessage e : listaErro) {
