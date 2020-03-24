@@ -39,7 +39,7 @@ public class SessaoVotacaoController {
 		return new ResponseEntity<>(sessaoVotacaoService.criarSessaoVotacao(sessao), HttpStatus.CREATED);
 	}
 	@PostMapping(path = "/votar", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Voto> criar(@Valid @RequestBody VotoDto voto){
+	public ResponseEntity<Voto> votar(@Valid @RequestBody VotoDto voto){
 		return new ResponseEntity<>(sessaoVotacaoService.votar(voto), HttpStatus.CREATED);
 	}
 	@GetMapping("/{idSessao}/resultado")

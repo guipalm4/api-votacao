@@ -1,5 +1,7 @@
 package com.guiPalma.apivotacao.repository;
 
+import java.util.List;
+
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.guiPalma.apivotacao.model.Pauta;
@@ -9,4 +11,6 @@ public interface SessaoVotacaoRepository extends PagingAndSortingRepository<Sess
 	
 	public SessaoVotacao findByPauta(Pauta pauta);
 	public Long countByPauta(Pauta pauta);
+	public List<SessaoVotacao> findByAtiva(Boolean ativa);
+	
 }

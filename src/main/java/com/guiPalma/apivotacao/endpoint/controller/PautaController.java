@@ -26,11 +26,11 @@ public class PautaController {
 	
 	private final PautaService pautaService;
 	
-	@GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Iterable<Pauta>> list(Pageable pageable) {
 		return new ResponseEntity<>(pautaService.list(pageable), HttpStatus.OK);
 	}
-	@PostMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Pauta> cadastrar(@Valid @RequestBody PautaDto pauta){
 		return new ResponseEntity<>(pautaService.cadastrar(pauta), HttpStatus.CREATED);	
 	}

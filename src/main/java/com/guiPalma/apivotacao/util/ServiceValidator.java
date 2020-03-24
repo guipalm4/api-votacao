@@ -1,6 +1,7 @@
 package com.guiPalma.apivotacao.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.guiPalma.apivotacao.exceptions.ObjectNotFoundException;
 import com.guiPalma.apivotacao.exceptions.ServiceErrorException;
@@ -8,12 +9,11 @@ import com.guiPalma.apivotacao.model.Associado;
 import com.guiPalma.apivotacao.model.Pauta;
 import com.guiPalma.apivotacao.repository.SessaoVotacaoRepository;
 
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Service
 public class ServiceValidator {
-	
-	private final SessaoVotacaoRepository sessaoVotacaoRepository;
+
+	@Autowired	
+	private  SessaoVotacaoRepository sessaoVotacaoRepository;
 	
 	public  boolean associadoPodeVotar(Pauta pauta, Associado associado) {
 		return ! pauta.getVotos().stream().filter(voto-> voto.getAssociado().getCpf().equals(associado.getCpf())).findAny().isPresent();
