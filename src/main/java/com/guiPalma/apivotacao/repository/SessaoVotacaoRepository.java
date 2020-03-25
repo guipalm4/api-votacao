@@ -12,5 +12,6 @@ public interface SessaoVotacaoRepository extends PagingAndSortingRepository<Sess
 	public SessaoVotacao findByPauta(Pauta pauta);
 	public Long countByPauta(Pauta pauta);
 	public List<SessaoVotacao> findByAtiva(Boolean ativa);
+	public Long countByAtiva(Boolean ativa);
 	
 }

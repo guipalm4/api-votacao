@@ -1,16 +1,22 @@
 package com.guiPalma.apivotacao.model;
 
-import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.guiPalma.apivotacao.dto.SessaoVotacaoDto;
 
 import lombok.AllArgsConstructor;
@@ -42,16 +48,23 @@ public class SessaoVotacao implements AbstractEntity {
 	@Column(nullable = false)
 	private String descricao;	
 	
-	@NotNull
-	@OneToOne
-    @JoinColumn(name = "pauta_id")
+	@OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "pauta_id", referencedColumnName = "id")
 	private Pauta pauta;
 	
 	@Column(nullable = false)
 	private Integer duracao;
 	
 	@Column(nullable = false)
-	private Calendar dataCricao;
+	private Date dataCricao;
+	
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "votacao_voto",
+		joinColumns = @JoinColumn(name = "sessao_votacao_id"),
+		inverseJoinColumns = @JoinColumn(name = "voto_id")
+	)
+	private List<Voto> votos;
 	
 	private Boolean ativa;
 	

@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
@@ -35,21 +36,26 @@ public class Voto implements AbstractEntity{
 	private Long id;
 	
 	@NotNull(message = "O campo 'associado' é obrigatório")
+	@ManyToOne
 	@JoinColumn(name = "id_associado")
-	@Column(nullable = false)
 	private Associado associado;
 	
 	@NotNull(message = "O voto é obrigatório")
-	@Column(nullable = false)
+	@Column(nullable = false)	
 	private char voto;
 	
 	@ManyToOne
+	@JoinColumn(name = "id_pauta")
 	private Pauta pauta;
 	
 	@Override
 	public Long getId() {
 		return this.id;
 	}	
+	
+	public Long getIdPauta() {
+		return this.pauta.getId();
+	}
 	
 
 }

@@ -2,7 +2,6 @@ package com.guiPalma.apivotacao.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import com.guiPalma.apivotacao.endpoint.consumer.CpfResponse;
 import com.guiPalma.apivotacao.endpoint.consumer.CpfServiceConsumer;
@@ -10,6 +9,7 @@ import com.guiPalma.apivotacao.exceptions.ObjectNotFoundException;
 import com.guiPalma.apivotacao.exceptions.ServiceErrorException;
 import com.guiPalma.apivotacao.model.Associado;
 import com.guiPalma.apivotacao.model.Pauta;
+import com.guiPalma.apivotacao.model.SessaoVotacao;
 import com.guiPalma.apivotacao.repository.SessaoVotacaoRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,8 +22,8 @@ public class ServiceValidator {
 	private final SessaoVotacaoRepository sessaoVotacaoRepository;
 	private final CpfServiceConsumer cpfServiceConsumer;
 
-	public boolean associadoPodeVotar(Pauta pauta, Associado associado) {
-		return !pauta.getVotos().stream().filter(voto -> voto.getAssociado().getCpf().equals(associado.getCpf()))
+	public boolean associadoPodeVotar(SessaoVotacao  sessao, Associado associado) {
+		return !sessao.getVotos().stream().filter(voto -> voto.getAssociado().getCpf().equals(associado.getCpf()))
 				.findAny().isPresent();
 	}
 
@@ -65,13 +65,16 @@ public class ServiceValidator {
 	}
 
 	public boolean validarAssociado(Associado associado, Pauta pauta) {
-		if(ApiValidator.has(associado)) {
-			if(isCpfValido(associado.getCpf())) {
-				if(associadoPodeVotar(pauta,associado)) {
+		if (ApiValidator.has(associado)) {
+			if (isCpfValido(associado.getCpf())) {
+				if (associadoPodeVotar(pauta.getSessao(), associado)) {
 					return true;
-				}throw new ServiceErrorException("Associado já votou nessa pauta");
-			}throw new ServiceErrorException("CPF do associado é inválido");
-		}throw new ObjectNotFoundException("Associado não encontrado");		
+				}
+				throw new ServiceErrorException("Associado já votou nessa pauta");
+			}
+			throw new ServiceErrorException("CPF do associado é inválido");
+		}
+		throw new ObjectNotFoundException("Associado não encontrado");
 	}
 
 }

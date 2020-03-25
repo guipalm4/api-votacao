@@ -1,15 +1,12 @@
 package com.guiPalma.apivotacao.model;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -24,6 +21,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
+@Table(name = "pauta")
 @Getter
 @Setter
 @Builder
@@ -37,6 +35,7 @@ public class Pauta implements AbstractEntity{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@EqualsAndHashCode.Include
+	@Column(name = "id")
 	private Long id;
 	
 	@NotNull(message = "O campo 'descricao' é obrigatório")
@@ -44,12 +43,8 @@ public class Pauta implements AbstractEntity{
 	private String descricao;
 	
 	@JsonIgnore
-	@ManyToMany
-	@JoinTable(name = "pauta_voto",
-		joinColumns = @JoinColumn(name = "pauta_id"),
-		inverseJoinColumns = @JoinColumn(name = "voto_id")
-	)
-	private List<Voto> votos;
+	 @OneToOne(mappedBy = "pauta")
+	private SessaoVotacao sessao;	
 	
 	@Override
 	public Long getId() {

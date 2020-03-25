@@ -1,6 +1,7 @@
 package com.guiPalma.apivotacao.endpoint.service;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
@@ -21,15 +22,19 @@ public class MonitoramentoService {
 	private final SessaoVotacaoRepository sessaoRepository;
 	private final SessaoVotacaoService sessaoService;
 
-	@Async("monitoramentoSessao")
+	@Async("monitoramento")
     public  void monitorarSessaoVotacao() {		
-		System.out.println("Motitoramento sendo executado...");
-		while(true) {
+		System.out.println("Monitoramento sendo executado...");		
+		boolean temVotacoesAtivas = true;
+		while(temVotacoesAtivas) {
 			List<SessaoVotacao> sessoesAtivas = sessaoRepository.findByAtiva(Boolean.TRUE);		
-			processarVotacoes(sessoesAtivas);
+			if(sessoesAtivas.size() > 0) {			
+				processarVotacoes(sessoesAtivas);
+			}
+			temVotacoesAtivas = sessaoRepository.countByAtiva(Boolean.TRUE) >0L;
 		}
+		
 	}
-
 	private void processarVotacoes(List<SessaoVotacao> sessoesAtivas) {
 		var listaVotacoesEncerradas = sessoesAtivas.stream().map(sessao->{
 			if(isSessaoVencida(sessao)) {
@@ -43,11 +48,13 @@ private void comunicarResultado(List<SessaoVotacao> listaVotacoesEncerradas) {
 		// TODO Mensageria		
 	}
 
-private boolean isSessaoVencida(SessaoVotacao sessao) {
-	Calendar inicio = sessao.getDataCricao();
-	inicio.add(Calendar.MINUTE, sessao.getDuracao());
-	Calendar expiracao = inicio;	
-	return expiracao.compareTo(Calendar.getInstance(TimeZone.getTimeZone("America/Sao_Paulo"))) < 0 ;
+private boolean isSessaoVencida(SessaoVotacao sessao) {		
+	Date  inicio = sessao.getDataCricao();	
+	Calendar calendar = Calendar.getInstance();	
+	calendar.setTime(inicio);
+	calendar.add(Calendar.MINUTE, sessao.getDuracao());	
+	Date expiracao = calendar.getTime();		
+	return expiracao.compareTo(Calendar.getInstance().getTime()) < 0 ;
 }
 
 }
