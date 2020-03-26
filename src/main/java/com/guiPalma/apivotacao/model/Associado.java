@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 import com.guiPalma.apivotacao.dto.AssociadoDto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -32,14 +33,17 @@ public class Associado implements AbstractEntity{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@EqualsAndHashCode.Include
+	@ApiModelProperty(value = "Id do associado")
 	private Long id;
 	
 	@NotNull(message = "O campo 'descricao' é obrigatório")
 	@Column(nullable = false)
+	@ApiModelProperty(value = "Nome do associado")
 	private String nome;
 	
 	@NotNull(message = "O campo 'cpf' é obrigatório")
 	@Column(nullable = false)
+	@ApiModelProperty(value = "Cpf  do associado ")
 	private String cpf;
 	
 	@Override
