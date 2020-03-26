@@ -3,15 +3,19 @@ package com.guiPalma.apivotacao.endpoint.service;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.guiPalma.apivotacao.dto.PautaDto;
+import com.guiPalma.apivotacao.dto.ResultadoDto;
+import com.guiPalma.apivotacao.dto.SessaoVotacaoDto;
+import com.guiPalma.apivotacao.endpoint.mensageria.NotificadorResultado;
 import com.guiPalma.apivotacao.model.SessaoVotacao;
 import com.guiPalma.apivotacao.repository.SessaoVotacaoRepository;
+import com.guiPalma.apivotacao.util.ApiValidator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +25,7 @@ public class MonitoramentoService {
 	
 	private final SessaoVotacaoRepository sessaoRepository;
 	private final SessaoVotacaoService sessaoService;
+	private final NotificadorResultado notificador;
 
 	@Async("monitoramento")
     public  void monitorarSessaoVotacao() {		
@@ -36,16 +41,18 @@ public class MonitoramentoService {
 		
 	}
 	private void processarVotacoes(List<SessaoVotacao> sessoesAtivas) {
-		var listaVotacoesEncerradas = sessoesAtivas.stream().map(sessao->{
+		 sessoesAtivas.stream().map(sessao->{
 			if(isSessaoVencida(sessao)) {
-				sessaoService.apurarResultado(sessao.getId());
+				var resultado = sessaoService.apurarResultado(sessao.getId());
+				if(ApiValidator.has(resultado)) {
+					comunicarResultado(resultado);
+				}
 			}
 			return sessao;
 		}) .collect(Collectors.toList());		
-		comunicarResultado(listaVotacoesEncerradas);
 		}
-private void comunicarResultado(List<SessaoVotacao> listaVotacoesEncerradas) {
-		// TODO Mensageria		
+private void comunicarResultado(ResultadoDto resultado) {	
+	notificador.send(resultado);	
 	}
 
 private boolean isSessaoVencida(SessaoVotacao sessao) {		
