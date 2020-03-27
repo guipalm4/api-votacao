@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.guiPalma.apivotacao.endpoint.service.PautaServiceTests
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.151 s - in com.guiPalma.apivotacao.endpoint.service.PautaServiceTests

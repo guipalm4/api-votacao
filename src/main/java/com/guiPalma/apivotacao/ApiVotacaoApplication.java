@@ -32,7 +32,7 @@ public class ApiVotacaoApplication  implements ApplicationRunner {
     public static final String QUEUE_GENERIC_NAME = "appGenericQueue";
     public static final String QUEUE_SPECIFIC_NAME = "appResultadoQueue";
     public static final String ROUTING_KEY = "messages.key";
-    public static final String CLOUDAMQP_URL = "	amqp://ydvmaaah:yyZL5QU8DjBb8nV_QLAuZo3ih6EtyiF3@orangutan.rmq.cloudamqp.com/ydvmaaah";	
+    public static final String CLOUDAMQP_URL = "amqp://ydvmaaah:yyZL5QU8DjBb8nV_QLAuZo3ih6EtyiF3@orangutan.rmq.cloudamqp.com/ydvmaaah";	
 	
     @Autowired
 	MonitoramentoService monitoramentoService;
@@ -44,7 +44,7 @@ public class ApiVotacaoApplication  implements ApplicationRunner {
 	 public ConnectionFactory connectionFactory() {
 	     final URI rabbitMqUrl;
 	     try {
-	         rabbitMqUrl = new URI(getEnvOrThrow("CLOUDAMQP_URL"));
+	         rabbitMqUrl = new URI(CLOUDAMQP_URL);
 	     } catch (URISyntaxException e) {
 	         throw new RuntimeException(e);
 	     }

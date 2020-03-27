@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.guiPalma.apivotacao.endpoint.service.SessaoVotacaoServiceTests
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.82 s - in com.guiPalma.apivotacao.endpoint.service.SessaoVotacaoServiceTests
