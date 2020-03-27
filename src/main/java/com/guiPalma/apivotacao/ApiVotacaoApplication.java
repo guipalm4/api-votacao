@@ -96,13 +96,6 @@ public class ApiVotacaoApplication  implements ApplicationRunner {
         return new Jackson2JsonMessageConverter();
     }
     
-    private static String getEnvOrThrow(String name) {
-        final String env = getenv(name);
-        if (env == null) {
-            throw new IllegalStateException("Environment variable [" + name + "] is not set.");
-        }
-        return env;
-    }
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {		
