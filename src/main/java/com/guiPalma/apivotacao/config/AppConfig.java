@@ -6,7 +6,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
-//@ComponentScan(basePackages = "com.guiPalma.apivotacao.thread")
 @EnableAsync
 public class AppConfig {
 	

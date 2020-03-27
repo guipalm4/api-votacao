@@ -1,0 +1,4 @@
+com\guiPalma\apivotacao\endpoint\service\PautaServiceTests.class
+com\guiPalma\apivotacao\endpoint\service\AssociadoServiceTests.class
+com\guiPalma\apivotacao\endpoint\service\SessaoVotacaoServiceTests.class
+com\guiPalma\apivotacao\ApiVotacaoApplicationTests.class
